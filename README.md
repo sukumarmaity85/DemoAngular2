@@ -1,4 +1,4 @@
-# sms-admin-web
+# DemoAngular2
 
 #### 1. Prerequisites
 
