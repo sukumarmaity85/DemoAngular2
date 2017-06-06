@@ -1,10 +1,9 @@
 import {Routes, RouterModule} from "@angular/router";
-import {AboutComponent} from "./about/components/about.component";
 import {ModuleWithProviders} from "@angular/core";
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/about', pathMatch: 'full' },
-    {path: 'about', component: AboutComponent, data: {title: 'About'}}
+    /*{path: 'about', component: AboutComponent, data: {title: 'About'}}*/
 ];
 
 export const appRoutingProviders: any[] = [];

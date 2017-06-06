@@ -1,9 +1,9 @@
 $(document).ready(function() {
   $('.input').on('focus', function() {
-    $('.login').addClass('clicked');
+    $('.user').addClass('clicked');
   });
-  $('.login').on('submit', function(e) {
+  $('.user').on('submit', function(e) {
     e.preventDefault();
-    $('.login').removeClass('clicked').addClass('loading');
+    $('.user').removeClass('clicked').addClass('loading');
   });
 });

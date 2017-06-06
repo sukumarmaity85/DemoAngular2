@@ -6,7 +6,7 @@ import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 
 import {AppComponent} from "./app.component";
 
-import {LoginComponent} from "./login/login.component";
+import {UserComponent} from "./user/component/user.component";
 
 import {routing, appRoutingProviders} from './app.routing';
 import {FormsModule} from "@angular/forms";
@@ -20,7 +20,7 @@ import {FormsModule} from "@angular/forms";
     ],
     declarations: [
         AppComponent,
-        LoginComponent,
+        UserComponent,
     ],
     providers: [
         appRoutingProviders
