@@ -1,0 +1,4 @@
+export class AppSettings {
+    public static API_ENDPOINT = "http://localhost:8080";
+    public static IMAGEBASEPATH = "C:/test/";
+    }

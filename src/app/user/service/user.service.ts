@@ -3,33 +3,77 @@ import { Http, Headers, Response}       from '@angular/http';
 import { Observable }     from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import {User} from '../model/user';
+import {UserWrapper} from '../model/user.wrapper';
+import {AppSettings} from '../../app.settings';
 
 @Injectable()
 export class UserService {
-    constructor (private http: Http) {
+    constructor(private http: Http) {
     }
-    getLoginDetails(user_id: string, password: string): Observable<User> {
-        let body = JSON.stringify({ user_id, password });
-        alert(body);
+
+    public getAlluser(): Observable<UserWrapper> {
+        let body = '';
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Authorization', 'Basic YWRtaW46MTIzNDU2');
-        return this.http.post(`http://localhost:8080/sms-rest-api/rest/user/login`, body, {
+        return this.http.post(`${AppSettings.API_ENDPOINT}/sms-admin-rest/rest/api/demouser/getAll`, body, {
             headers: headers
         })
             .map(this.extractData);
     }
+
+    public addEdituser(user: User): Observable<UserWrapper> {
+        user.type = 'GUARD';
+        let body = JSON.stringify(user);
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Authorization', 'Basic YWRtaW46MTIzNDU2');
+        return this.http.post(`${AppSettings.API_ENDPOINT}/sms-admin-rest/rest/api/demouser/saveOrUpdate`, body, {
+            headers: headers
+        })
+            .map(this.extractSingleData);
+    }
+
+
+    public deleteUser(user: User): Observable<UserWrapper> {
+        let body = JSON.stringify(user);
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Authorization', 'Basic YWRtaW46MTIzNDU2');
+        return this.http.post(`${AppSettings.API_ENDPOINT}/sms-admin-rest/rest/api/demouser/delete`, body, {
+            headers: headers
+        })
+            .map(this.extractSingleData);
+    }
+
+    public fileUoload(form: FormData): Observable<UserWrapper> {
+        form.append("homepath", AppSettings.IMAGEBASEPATH);
+        let headers = new Headers();
+        // headers.append('Content-Type', 'multipart/form-data');
+        headers.append('Authorization', 'Basic YWRtaW46MTIzNDU2');
+        return this.http.post(`${AppSettings.API_ENDPOINT}/sms-rest-api/rest/user/upload`, form, {
+            headers: headers
+        })
+            .map(this.extractSingleData);
+    }
+
     private extractData(res: Response) {
         if (res.status < 200 || res.status >= 300) {
-            console.log('Bad response status: ');
             throw new Error('Bad response status: ' + res.status);
         }
         return res.json();
     }
-    private handleError (error: any) {
-        // In a real world app, we might send the error to remote logging infrastructure
+
+    private extractSingleData(res: Response) {
+        if (res.status < 200 || res.status >= 300) {
+            throw new Error('Bad response status: ' + res.status);
+        }
+        console.log(res.json());
+        return res.json();
+    }
+
+    private handleError(error: any) {
         let errMsg = error.message || 'Server error';
-        console.error(errMsg); // log to console instead
         return Observable.throw(errMsg);
     }
 }
