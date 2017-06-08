@@ -15,9 +15,9 @@ export class GuardFilterPipe implements PipeTransform {
             let filterKeys = Object.keys(filter);
             return users.filter(user =>
                 filterKeys.reduce((memo, keyName) =>
-                (memo && (new RegExp(filter[keyName], 'gi').test(user['userDetailsVo']['fullname']) ||
-                new RegExp(filter[keyName], 'gi').test(user['gateNo'])
-                || new RegExp(filter[keyName], 'gi').test(user['shiftTime'])) ) || filter[keyName] === "", true));
+                (memo && (new RegExp(filter[keyName], 'gi').test(user['name']) ||
+                new RegExp(filter[keyName], 'gi').test(user['email'])
+                || new RegExp(filter[keyName], 'gi').test(user['mobile'])) ) || filter[keyName] === "", true));
         } else {
             return users;
         }
@@ -30,16 +30,18 @@ export class GuardFilterPipe implements PipeTransform {
     providers: [UserService]
 })
 export class UserComponent {
-    constructor(private _userService: UserService) {}
+    constructor(private _userService: UserService) {
+    }
+
     userWapper: UserWrapper;
     users: Array<User> = new Array<User>();
-    user = new User(null, '', '', '', '', '', Gobal.loginWrapper.user.mappingId);
+    user = new User(null, '', '', '', '', '', '', '');
     public filterText: string = '';
     public filterInput = new FormControl();
     isImageChanged = false;
     file1: Blob;
-    backBtnType = 'VIEW';
-    todayDate = new Date().getTime();
+    countries: Array<string>;
+    qualificatons: Array<string>;
 
     fileChange(input) {
         this.readFiles(input.files);
@@ -53,7 +55,7 @@ export class UserComponent {
     }
 
     public file_srcs: string[] = [];
-    public pro_src: string = "http://sangelit.com/images/team/user.jpg";
+    public pro_src: string = "http://sangelit.com/images/demo/user.jpg";
 
     readFiles(files, index = 0) {
         // Create the file reader
@@ -118,122 +120,80 @@ export class UserComponent {
     }
 
     ngOnInit() {
-        this.todayDate = new Date().getTime();
-        document.getElementById('pageloader').style.display = "block";
-        document.getElementById('pagetitle').innerHTML = "Guards";
-        this.backBtnType = 'VIEW';
-        this.divVisible = Gobal.divVisible;
-        Gobal.divVisible.listview = false;
-        Gobal.divVisible.formview = true;
-        Gobal.divVisible.detailview = true;
-        Gobal.hideBg();        
-        this._guardService.getAlluser().subscribe(
+        this._userService.getAlluser().subscribe(
             userWrapper => this.extata(userWrapper),
             error => this.errorMessage(<any>error));
-        this.filterInput
-            .valueChanges
-            .debounceTime(200)
-            .subscribe(term => {
-                this.filterText = term;
-            });
+        this._userService.getCountry().subscribe(
+            countries => this.extata1(countries),
+            error => this.errorMessage(<any>error));
+        this._userService.getQualification().subscribe(
+            userWrapper => this.extata2(countries),
+            error => this.errorMessage(<any>error));
+        /*this.filterInput
+         .valueChanges
+         .debounceTime(200)
+         .subscribe(term => {
+         this.filterText = term;
+         });*/
     }
 
     public viewUser(user: User) {
-        this.backBtnType = 'VIEW';
-        Gobal.showBg();
-        this.divVisible.addbtn = true;
-        this.divVisible.listview = true;
-        this.divVisible.detailview = false;
-        this.divVisible.formview = true;
         this.user = user;
-        if (user.userDetailsVo.image !== '' || user.userDetailsVo.image !== null) {
-            this.pro_src = "http://sangelit.com/images/team/" + user.userDetailsVo.image + '?' + new Date().getTime();
+        if (user.photo !== '' || user.photo !== null) {
+            this.pro_src = "http://sangelit.com/images/team/" + user.photo + '?' + new Date().getTime();
         }
 
     }
 
     public editUser(user: User) {
-        Gobal.hideBg();
-        this.backBtnType = 'EDIT';
-        this.divVisible.addbtn = true;
-        this.divVisible.listview = true;
-        this.divVisible.detailview = true;
-        this.divVisible.formview = false;
         this.user = user;
-        this.checkValue('fullname');
-        this.checkValue('mobile');
-        this.checkValue('fulladdress');
 
     }
 
     public newMember() {
-        Gobal.hideBg();
-        this.backBtnType = 'VIEW';
-        this.divVisible.addbtn = true;
-        this.divVisible.listview = true;
-        this.divVisible.detailview = true;
-        this.divVisible.formview = false;
-        let userDetailVo: UserDetailVo = new UserDetailVo(null, 0, Gobal.loginWrapper.user.mappingId, '', '', '', '', '', '', '', '', '');
-        this.user = new User(null, 0, '', '', '', '', Gobal.loginWrapper.user.mappingId, userDetailVo, true, true);
-        this.user.userDetailsVo = userDetailVo;       
-        this.addValidation('fullname');
-        this.addValidation('mobile');
-        this.addValidation('fulladdress');
+        this.user = new User(null, 0, '', '', '', '', '', '');
     }
 
-    private addValidation(txt) {
-        let inputdiv = document.getElementById(txt);
-        inputdiv.classList.remove("input-green");
-        inputdiv.classList.add("input-red");
-
-    }
 
     onSubmit() {
-        document.getElementById('pageloader').style.display = "block";
-        let postDate = document.getElementById('shiftTime').value;
-        this.user.userDetailsVo.shiftTime = postDate;
         let userId = this.user.userId;
-        this._guardService.addEditGuard(this.user).subscribe(
+        this._userService.addEdituser(this.user).subscribe(
             userWrapper => this.extractGuard(userWrapper, userId),
             error => this.errorMessage(<any>error));
 
 
     }
 
-    deleteUser(user: User) {
-        this.user = user;
+    deleteUser(userId: number) {
         let deleteUser = window.confirm('Are you sure you want to delete the Guard?');
         if (deleteUser) {
-            document.getElementById('pageloader').style.display = "block";
-            this._guardService.deleteGuard(this.user).subscribe(
+            this._userService.deleteUser(userId).subscribe(
                 userWrapper => this.extractGuard(userWrapper, -1),
                 error => this.errorMessage(<any>error));
         }
 
     }
 
-    private extata(userlistWrapper: UserListWrapper) {
-        if (userlistWrapper.loginStatus === 'VALID') {
-            this.users = userlistWrapper.users;
-            this.message1.descr = "";
-        } else if (userlistWrapper.loginStatus === 'EXPIRED') {
-            this.message1.descr = 'Your memberId is expired, please contact admin';
-        } else if (userlistWrapper.loginStatus === 'INVALID') {
-            this.message1.descr = 'Your memberId or password is invalid';
-        } else if (userlistWrapper.loginStatus === 'SERVERERROR') {
-            this.message1.descr = 'server error , please try later';
+    private extata(userWrapper: UserWrapper) {
+        if (userWrapper.responseStatus === 'VALID') {
+            this.users = userWrapper.demoUsers;
+        } else if (userWrapper.responseStatus === 'SERVERERROR') {
+            alert('server error , please try later');
         }
-        document.getElementById('pageloader').style.display = "none";
+    }
+
+    private extata1(countries: Array<string>) {
+        this.countries = countries;
+    }
+
+    private extata1(qualifications: Array<string>) {
+        this.qualificatons = qualifications;
     }
 
     private extractGuard(userWrapper: UserWrapper, userId: number) {
 
-        if (userWrapper.loginStatus === 'VALID') {
-            Gobal.showBg();
-            this.divVisible.listview = true;
-            this.divVisible.detailview = false;
-            this.divVisible.formview = true;
-            this.user = userWrapper.user;
+        if (userWrapper.responseStatus === 'VALID') {
+            this.user = userWrapper.demoUser;
             if (userId === null) {
                 this.users.unshift(this.user);
             }
@@ -244,91 +204,38 @@ export class UserComponent {
                         break;
                     }
                 }
-                this.divVisible.listview = false;
-                this.divVisible.detailview = true;
-                this.divVisible.formview = true;
-                Gobal.hideBg();
             }
             if (userId !== -1) {
                 if (this.isImageChanged && this.user.userId !== null) {
-                    document.getElementById('pageloader').style.display = "block";
                     let form = new FormData();
                     let name = "image.jpg";
                     form.append("file", this.file1, name);
                     form.append("userid", this.user.userId);
-                    this._guardService.fileUoload(form).subscribe(
+                    this._userService.fileUoload(form).subscribe(
                         userWrapper => this.extractUser(userWrapper),
                         error => this.errorMessage(<any>error));
                 }
             }
 
-        } else if (userWrapper.loginStatus === 'EXPIRED') {
-            alert('Your memberId is expired, please contact admin');
-        } else if (userWrapper.loginStatus === 'INVALID') {
-            alert('Your memberId or password is invalid');
-        } else if (userWrapper.loginStatus === 'SERVERERROR') {
-            alert('server error , please try later');
+        } else if (userWrapper.responseStatus === 'SERVERERROR') {
+            alert('Server error');
         }
-        document.getElementById('pageloader').style.display = "none";
     }
 
     private errorMessage(message: string) {
-        this.message1.descr = 'Server error, please try later';
-        alert(this.message1.descr);
+        alert('Server error, please try later');
     }
 
     private showListScreen() {
-        if (this.backBtnType === 'VIEW') {
-            Gobal.hideBg();
-            if (Gobal.loginWrapper.user.type === 'ADMIN') {
-                this.divVisible.addbtn = false;
-            }
-            this.divVisible.listview = false;
-            this.divVisible.detailview = true;
-            this.divVisible.formview = true;
-        }
-        if (this.backBtnType === 'EDIT') {
-            this.backBtnType = 'VIEW';
-            Gobal.showBg();
-            this.divVisible.addbtn = true;
-            this.divVisible.listview = true;
-            this.divVisible.detailview = false;
-            this.divVisible.formview = true;
-        }
     }
 
-    private  checkValue(txt) {
-        let inputdiv = document.getElementById(txt);
-        if (inputdiv.value === '') {
-            inputdiv.classList.remove("input-green");
-            inputdiv.classList.add("input-red");
-        } else {
-            inputdiv.classList.remove("input-red");
-            inputdiv.classList.add("input-green");
-        }
-    }
 
     private extractUser(userWrapper: UserWrapper) {
-        if (userWrapper.loginStatus === 'VALID') {
-            this.user = userWrapper.user;
-        } else if (userWrapper.loginStatus === 'EXPIRED') {
-            alert('Your memberId is expired, please contact admin');
-        } else if (userWrapper.loginStatus === 'INVALID') {
-            alert('Your memberId or password is invalid');
-        } else if (userWrapper.loginStatus === 'SERVERERROR') {
+        if (userWrapper.responseStatus === 'VALID') {
+            this.user = userWrapper.demoUser;
+        } else if (userWrapper.responseStatus === 'SERVERERROR') {
             alert('server error , please try later');
         }
-        document.getElementById('pageloader').style.display = "none";
     }
 
-    private mobileValidation(txt) {
-        let inputdiv = document.getElementById(txt);
-        if (inputdiv.value === '' || inputdiv.value.length < 10) {
-            inputdiv.classList.remove("input-green");
-            inputdiv.classList.add("input-red");
-        } else {
-            inputdiv.classList.remove("input-red");
-            inputdiv.classList.add("input-green");
-        }
-    }
 }

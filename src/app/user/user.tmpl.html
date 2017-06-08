@@ -1,1 +1,128 @@
-<div>user body</div>
+<section class="contact-list">
+
+    <div style="margin-left: 20px;">
+        <input type="text" placeholder="Search">
+        <input type="button" value="ADD+"/>
+
+    </div>
+    <div style="margin: 20px;">
+        <table style="border: solid 1px black;width: 100%">
+            <tr *ngFor="let user of users">
+                <td>
+                    <div class="pull-left">
+                        <img class="lv-img-sm"
+                             src="http://sangelit.com/images/team/{{user.photo === null || user.photo === '' ? 'user.jpg' : user.photo}}"
+                             alt="">
+                    </div>
+                </td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.mobile}}</td>
+                <td>{{user.gander}}</td>
+                <td>{{user.country}}</td>
+                <td>{{user.qualification}}</td>
+                <td>
+                    <a href="#" (click)="editUser(user)">Edit
+                    </a>
+                </td>
+                <td>
+                    <a href="#" (click)="deleteUser(user.userId)">Delete
+                    </a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div>
+        <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+            <div class="lv-item1 media">
+                <div class="pull-left">
+                    <label for="file">
+                        <img class="lv-img-sm-up"
+                             src="{{pro_src}}"
+                             id="profile-image" alt=""
+                             title="Upload image">
+                        <input id="file" style="display:none" name="file" (change)="fileChange(input)"
+                               #input
+                               type="file">
+                    </label>
+                </div>
+
+                <div class="media-body">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="mdi mdi-account"></i> </span>
+                        <div class="fg-line" for="name">
+                            <input type="text" class="form-control input-border input-red"
+
+                                   id="name" placeholder="Name" required
+                                   [(ngModel)]="user.name" name="name"
+                                   #name="ngModel">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" for="mobile"><i class="mdi mdi-cellphone"></i></span>
+                    <div class="fg-line">
+                        <input type="text" class="form-control input-border input-red"
+                               placeholder="Mobile Number"
+                               id="mobile" required
+                               maxlength="10" minlength="10" onkeyup="this.value=this.value.replace(/[^\d]/,'')"
+                               [(ngModel)]="user.mobile" name="mobile" #mobile="ngModel">
+                    </div>
+
+                </div>
+
+
+                <div class="input-group">
+                    <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
+                    <div class="fg-line">
+                        <input type="email" class="form-control input-border " placeholder="Email"
+                               id="email"
+
+                               [(ngModel)]="user.email" name="email" #email="ngModel">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
+                    <div class="fg-line">
+                       <input type="radio">Male
+                        <input type="radio">Female
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
+                    <div class="fg-line">
+                        <select class="form-control input-border" [(ngModel)]="user.country" id="country"
+                                name="type">
+                            <option *ngFor="let country of countries"
+                                    value={{country}}>{{country}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
+                    <div class="fg-line">
+                        <select class="form-control input-border" [(ngModel)]="user.qualification" id="qualification"
+                                name="type">
+                            <option *ngFor="let qualification of qualificatons"
+                                    value={{qualification}}>{{qualification}}
+                            </option>
+                        </select>
+                    </div>
+
+
+                </div>
+                <div class="input-group" style="width:98%;">
+                    <button type="submit" class="btn btn-success" style="float: right"
+                            [disabled]="!heroForm.form.valid">Submit
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+</section>
