@@ -7,7 +7,8 @@ import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 import {AppComponent} from "./app.component";
 
 import {UserComponent, GuardFilterPipe} from "./user/component/user.component";
-
+import {Pagination} from './util/pagination.component';
+import {Pager} from './util/pager.component';
 import {routing, appRoutingProviders} from './app.routing';
 import {FormsModule} from "@angular/forms";
 
@@ -16,12 +17,13 @@ import {FormsModule} from "@angular/forms";
         BrowserModule,
         FormsModule,
         routing,
-        HttpModule
+        HttpModule,
     ],
     declarations: [
         AppComponent,
         UserComponent,
-        GuardFilterPipe
+        GuardFilterPipe,
+        Pagination,
     ],
     providers: [
         appRoutingProviders

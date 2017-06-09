@@ -425,8 +425,9 @@ a.lv-footer:hover {
 }
 
 .input-border{
-    border:solid 1px #EEEEEE;
+    border:solid 1px #000;
     width: 98%;
+   
 
 }
 .input-red{

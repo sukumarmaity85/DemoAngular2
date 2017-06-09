@@ -5,6 +5,9 @@ import {User} from '../model/user';
 import {LookupWrapper} from '../model/lookup.wrapper';
 import {UserService} from '../service/user.service';
 import {UserWrapper} from '../model/user.wrapper';
+import {CORE_DIRECTIVES, FORM_DIRECTIVES} from '@angular/common';
+import {Pagination} from '../../util/pagination.component';
+import {Pager} from '../../util/pager.component';
 @Pipe({
     name: 'guardfilter',
     pure: false
@@ -28,7 +31,8 @@ export class GuardFilterPipe implements PipeTransform {
     selector: 'user-form',
     templateUrl: './app/user/user.tmpl.html',
     styleUrls: ['./app/user/css/user.css'],
-    providers: [UserService]
+    providers: [UserService],
+    directives: [Pagination, Pager, FORM_DIRECTIVES, CORE_DIRECTIVES],
 })
 export class UserComponent {
     constructor(private _userService: UserService) {
@@ -44,7 +48,8 @@ export class UserComponent {
     file1: Blob;
     countries: Array<string>;
     qualificatons: Array<string>;
-
+    viewdiv = false;
+    formdiv = true;
     fileChange(input) {
         this.readFiles(input.files);
     }
@@ -142,11 +147,15 @@ export class UserComponent {
 
     public editUser(user: User) {
         this.user = user;
+        this.viewdiv = true;
+        this.formdiv = false;
 
     }
 
-    public newMember() {
-        this.user = new User(null, 0, '', '', '', '', '', '');
+    public newUser() {
+        this.user = new User(null, '', '', '', '', '', '', '');
+        this.viewdiv = true;
+        this.formdiv = false;
     }
 
 
@@ -190,6 +199,8 @@ export class UserComponent {
 
         if (userWrapper.responseStatus === 'VALID') {
             this.user = userWrapper.demoUser;
+             this.viewdiv = false;
+             this.formdiv = true;
             if (userId === null) {
                 this.users.unshift(this.user);
             }
@@ -233,5 +244,17 @@ export class UserComponent {
             alert('server error , please try later');
         }
     }
+     private setCurrentPage(pageNo:number):void {
+        this.currentPage = pageNo;
+    };
+    currentSelectedPage:string = "";
+    currentItemsPerPage:string = "";
+    private maxSize:number = 3;
+    private totalResults:number = 60;
+    private currentPage:number = 2;
+    private currentPageChanged(event:any):void {
+        this.currentSelectedPage = ' is : ' + event.page;
+        this.currentItemsPerPage = ' is : ' +  event.itemsPerPage;
+    };
 
 }
