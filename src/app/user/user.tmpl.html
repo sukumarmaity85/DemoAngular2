@@ -53,7 +53,7 @@
                     <div class="input-group">
                         <span class="input-group-addon"><i class="mdi mdi-account"></i> </span>
                         <div class="fg-line" for="name">
-                            <input type="text" class="form-control input-border input-red"
+                            <input type="text" class="form-control input-border "
 
                                    id="name" placeholder="Name" required
                                    [(ngModel)]="user.name" name="name"
@@ -65,7 +65,7 @@
                 <div class="input-group">
                     <span class="input-group-addon" for="mobile"><i class="mdi mdi-cellphone"></i></span>
                     <div class="fg-line">
-                        <input type="text" class="form-control input-border input-red"
+                        <input type="text" class="form-control input-border "
                                placeholder="Mobile Number"
                                id="mobile" required
                                maxlength="10" minlength="10" onkeyup="this.value=this.value.replace(/[^\d]/,'')"
@@ -79,22 +79,23 @@
                     <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
                     <div class="fg-line">
                         <input type="email" class="form-control input-border " placeholder="Email"
-                               id="email"
-
+                               id="email" required
                                [(ngModel)]="user.email" name="email" #email="ngModel">
                     </div>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
+                    <span class="input-group-addon" for="gander"><i class="mdi mdi-email"></i></span>
                     <div class="fg-line">
-                       <input type="radio">Male
-                        <input type="radio">Female
+
+                        <input type="radio" [(ngModel)]="user.gander" name="sex" value="MALE">Male<br>
+                        <input type="radio" [(ngModel)]="user.gander" name="sex" value="FEMALE">Female
+
                     </div>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
+                    <span class="input-group-addon" for="country"><i class="mdi mdi-email"></i></span>
                     <div class="fg-line">
-                        <select class="form-control input-border" [(ngModel)]="user.country" id="country"
+                        <select class="form-control input-border" [(ngModel)]="user.country" id="country" required
                                 name="type">
                             <option *ngFor="let country of countries"
                                     value={{country}}>{{country}}
@@ -103,22 +104,19 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <span class="input-group-addon" for="email"><i class="mdi mdi-email"></i></span>
+                    <span class="input-group-addon" for="qualification"><i class="mdi mdi-email"></i></span>
                     <div class="fg-line">
                         <select class="form-control input-border" [(ngModel)]="user.qualification" id="qualification"
+                                required
                                 name="type">
                             <option *ngFor="let qualification of qualificatons"
                                     value={{qualification}}>{{qualification}}
                             </option>
                         </select>
                     </div>
-
-
                 </div>
                 <div class="input-group" style="width:98%;">
-                    <button type="submit" class="btn btn-success" style="float: right"
-                            [disabled]="!heroForm.form.valid">Submit
-                    </button>
+                    <button type="submit" class="btn btn-success" style="float: right">Submit</button>
                 </div>
             </div>
         </form>

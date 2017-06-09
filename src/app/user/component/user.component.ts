@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Pipe, PipeTransform} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {User} from '../model/user';
+import {LookupWrapper} from '../model/lookup.wrapper';
 import {UserService} from '../service/user.service';
 import {UserWrapper} from '../model/user.wrapper';
 @Pipe({
@@ -34,6 +35,7 @@ export class UserComponent {
     }
 
     userWapper: UserWrapper;
+    userLook: LookupWrapper;
     users: Array<User> = new Array<User>();
     user = new User(null, '', '', '', '', '', '', '');
     public filterText: string = '';
@@ -124,10 +126,10 @@ export class UserComponent {
             userWrapper => this.extata(userWrapper),
             error => this.errorMessage(<any>error));
         this._userService.getCountry().subscribe(
-            countries => this.extata1(countries),
+            userLook => this.extata1(userLook),
             error => this.errorMessage(<any>error));
         this._userService.getQualification().subscribe(
-            userWrapper => this.extata2(countries),
+            userLook => this.extata2(userLook),
             error => this.errorMessage(<any>error));
         /*this.filterInput
          .valueChanges
@@ -137,13 +139,6 @@ export class UserComponent {
          });*/
     }
 
-    public viewUser(user: User) {
-        this.user = user;
-        if (user.photo !== '' || user.photo !== null) {
-            this.pro_src = "http://sangelit.com/images/team/" + user.photo + '?' + new Date().getTime();
-        }
-
-    }
 
     public editUser(user: User) {
         this.user = user;
@@ -156,6 +151,7 @@ export class UserComponent {
 
 
     onSubmit() {
+
         let userId = this.user.userId;
         this._userService.addEdituser(this.user).subscribe(
             userWrapper => this.extractGuard(userWrapper, userId),
@@ -182,12 +178,12 @@ export class UserComponent {
         }
     }
 
-    private extata1(countries: Array<string>) {
-        this.countries = countries;
+    private extata1(lookup: LookupWrapper) {
+        this.countries = lookup.listData;
     }
 
-    private extata1(qualifications: Array<string>) {
-        this.qualificatons = qualifications;
+    private extata2(lookup: LookupWrapper) {
+        this.qualificatons = lookup.listData;
     }
 
     private extractGuard(userWrapper: UserWrapper, userId: number) {

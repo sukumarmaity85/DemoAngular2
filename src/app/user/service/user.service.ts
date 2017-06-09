@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 import {User} from '../model/user';
 import {UserWrapper} from '../model/user.wrapper';
 import {AppSettings} from '../../app.settings';
+import {LookupWrapper} from '../model/lookup.wrapper';
 
 @Injectable()
 export class UserService {
@@ -21,7 +22,8 @@ export class UserService {
         })
             .map(this.extractData);
     }
-    public getCountry(): Observable<Array> {
+
+    public getCountry(): Observable<LookupWrapper> {
         let body = '';
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
@@ -31,7 +33,8 @@ export class UserService {
         })
             .map(this.extractData);
     }
-    public getQualification(): Observable<Array> {
+
+    public getQualification(): Observable<LookupWrapper> {
         let body = '';
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
@@ -54,8 +57,8 @@ export class UserService {
     }
 
 
-    public deleteUser(userId: number): Observable<UserWrapper> {
-        let body = JSON.stringify({userId});
+    public deleteUser(id: number): Observable<UserWrapper> {
+        let body = JSON.stringify({id});
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         headers.append('Authorization', 'Basic YWRtaW46MTIzNDU2');
@@ -77,9 +80,19 @@ export class UserService {
     }
 
     private extractData(res: Response) {
+
         if (res.status < 200 || res.status >= 300) {
             throw new Error('Bad response status: ' + res.status);
         }
+        return res.json();
+    }
+
+    private extractData1(res: Response) {
+        alert(res);
+        if (res.status < 200 || res.status >= 300) {
+            throw new Error('Bad response status: ' + res.status);
+        }
+        alert(res.json());
         return res.json();
     }
 
